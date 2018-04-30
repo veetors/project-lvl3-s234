@@ -6,7 +6,7 @@
 
 [![Build Status](https://travis-ci.org/veetors/project-lvl3-s234.svg?branch=master)](https://travis-ci.org/veetors/project-lvl3-s234)
 
-## (rss-reader)[http://rss-reader-veetors.surge.sh]
+## [rss-reader](http://rss-reader-veetors.surge.sh)
 
 ## Setup
 
