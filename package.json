@@ -1,0 +1,40 @@
+{
+  "name": "rss-reader-veetors",
+  "version": "0.0.1",
+  "description": "rss-reader",
+  "main": "dist/index.js",
+  "engines": {
+    "node": "8"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "babel-node": "babel-node",
+    "eslint": "eslint",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/veetors/project-lvl3-s234.git"
+  },
+  "author": "veetors",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/veetors/project-lvl3-s234/issues"
+  },
+  "homepage": "https://github.com/veetors/project-lvl3-s234#readme",
+  "devDependencies": {
+    "babel-cli": "*",
+    "babel-core": "*",
+    "babel-eslint": "*",
+    "babel-plugin-transform-runtime": "*",
+    "babel-preset-env": "*",
+    "babel-preset-stage-0": "*",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "*",
+    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-import": "*"
+  }
+}
