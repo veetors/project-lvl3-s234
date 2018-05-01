@@ -1,6 +1,6 @@
 {
   "name": "rss-reader-veetors",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "rss-reader",
   "main": "dist/index.js",
   "engines": {
@@ -47,8 +47,10 @@
     "webpack-serve": "^0.3.1"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bootstrap": "^4.1.0",
     "jquery": "^3.3.1",
-    "popper.js": "^1.14.3"
+    "popper.js": "^1.14.3",
+    "validator": "^9.4.1"
   }
 }
