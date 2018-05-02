@@ -19,8 +19,10 @@ const validate = (urls) => {
   });
 };
 
+const getTextContent = elem => elem.textContent;
+
 const request = url => axios.get(url);
 
 const getFeedsData = adreses => Promise.all(adreses.map(request));
 
-export { validate, getFeedsData };
+export { validate, getTextContent, getFeedsData };

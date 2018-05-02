@@ -1,3 +1,7 @@
+const render = (tree) => {
+
+};
+
 const createFeedList = (data, rootNode) => {
   const ulNode = document.createElement('ul');
   ulNode.classList.add('list-group');
@@ -19,6 +23,7 @@ const createFeedList = (data, rootNode) => {
 };
 
 const createFeedItem = (data) => {
+  // console.log(data);
   const rootNode = document.createElement('div');
   rootNode.classList.add('jumbotron');
 
@@ -49,4 +54,4 @@ const updateDom = (nodes) => {
   rssInput.value = '';
 };
 
-export { createFeedItem, updateDom };
+export { render, createFeedItem, updateDom };

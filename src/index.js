@@ -2,7 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import updateUrls from './urls';
 import parse from './parse';
 import { validate, getFeedsData } from './generic';
-import { createFeedItem, updateDom } from './dom';
+import buildFeedsTree from './tree';
+import { render, createFeedItem, updateDom } from './render';
 
 const urls = [];
 
@@ -14,7 +15,10 @@ const main = (addresses) => {
 
     getFeedsData(urls)
       .then(res => res.map(parse))
-      .then(data => data.map(createFeedItem))
+      .then((data) => {
+        buildFeedsTree(data);
+        return data.map(createFeedItem);
+      })
       .then(nodes => updateDom(nodes));
   };
 
