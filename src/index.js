@@ -25,7 +25,3 @@ const main = (addresses) => {
 };
 
 main(urls);
-
-// 'http://cors-anywhere.herokuapp.com/http://lenta.ru/rss/news'
-// 'http://cors-anywhere.herokuapp.com/http://lorem-rss.herokuapp.com/feed'
-// 'http://ru.hexlet.io/blog.rss'
