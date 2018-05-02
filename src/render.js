@@ -1,20 +1,14 @@
-const render = (tree) => {
-
-};
-
-const createFeedList = (data, rootNode) => {
+const renderFeedList = (children, rootNode) => {
   const ulNode = document.createElement('ul');
   ulNode.classList.add('list-group');
   rootNode.append(ulNode);
 
-  const itemTitle = data.querySelectorAll('item > title');
-  const itemLink = data.querySelectorAll('item > link');
-  itemTitle.forEach((item, index) => {
+  children.forEach((child) => {
     const liNode = document.createElement('li');
     liNode.classList.add('list-group-item');
     const linkNode = document.createElement('a');
-    linkNode.textContent = item.textContent;
-    linkNode.href = itemLink[index].textContent;
+    linkNode.textContent = child.itemTitle;
+    linkNode.href = child.itemLink;
     liNode.append(linkNode);
     ulNode.append(liNode);
   });
@@ -22,36 +16,36 @@ const createFeedList = (data, rootNode) => {
   return rootNode;
 };
 
-const createFeedItem = (data) => {
-  // console.log(data);
+const renderFeed = (feedTree) => {
   const rootNode = document.createElement('div');
   rootNode.classList.add('jumbotron');
 
-  const feedTitle = data.querySelector('channel > title');
   const feedTitleNode = document.createElement('h3');
-  feedTitleNode.textContent = feedTitle.textContent;
+  feedTitleNode.textContent = feedTree.title;
   rootNode.append(feedTitleNode);
 
-  const description = data.querySelector('channel > description');
   const descriptionNode = document.createElement('p');
-  descriptionNode.textContent = description.textContent;
+  descriptionNode.textContent = feedTree.description;
   rootNode.append(descriptionNode);
 
-  createFeedList(data, rootNode);
+  renderFeedList(feedTree.children, rootNode);
 
   return rootNode;
 };
 
-const updateDom = (nodes) => {
+const render = (tree) => {
   const rssInput = document.querySelector('.rss-input');
-
   const newFeedsNode = document.createElement('div');
   newFeedsNode.classList.add('feeds');
 
-  nodes.forEach(node => newFeedsNode.prepend(node));
+  tree.forEach((node) => {
+    const feedNode = renderFeed(node);
+    newFeedsNode.prepend(feedNode);
+  });
+
   document.querySelector('.feeds').replaceWith(newFeedsNode);
 
   rssInput.value = '';
 };
 
-export { render, createFeedItem, updateDom };
+export default render;

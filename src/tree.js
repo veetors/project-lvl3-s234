@@ -23,10 +23,6 @@ const buildItemTree = (data) => {
   return { title, description, children };
 };
 
-const buildFeedsTree = (data) => {
-  const result = data.map(buildItemTree)
-  console.log('result =', result);
-  return result;
-};
+const buildFeedsTree = data => data.map(buildItemTree);
 
 export default buildFeedsTree;

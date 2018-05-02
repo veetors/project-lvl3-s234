@@ -3,7 +3,7 @@ import updateUrls from './urls';
 import parse from './parse';
 import { validate, getFeedsData } from './generic';
 import buildFeedsTree from './tree';
-import { render, createFeedItem, updateDom } from './render';
+import render from './render';
 
 const urls = [];
 
@@ -15,11 +15,8 @@ const main = (addresses) => {
 
     getFeedsData(urls)
       .then(res => res.map(parse))
-      .then((data) => {
-        buildFeedsTree(data);
-        return data.map(createFeedItem);
-      })
-      .then(nodes => updateDom(nodes));
+      .then(data => buildFeedsTree(data))
+      .then(tree => render(tree));
   };
 
   validate(urls);
@@ -32,4 +29,3 @@ main(urls);
 // 'http://cors-anywhere.herokuapp.com/http://lenta.ru/rss/news'
 // 'http://cors-anywhere.herokuapp.com/http://lorem-rss.herokuapp.com/feed'
 // 'http://ru.hexlet.io/blog.rss'
-// 'https://itc.ua/feed/'
