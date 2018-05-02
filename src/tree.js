@@ -1,17 +1,11 @@
-import { getTextContent } from './generic';
+import { getElement, getElements } from './generic';
 
 const buildItemTree = (data) => {
-  const titleNode = data.querySelector('channel > title');
-  const descriptionNode = data.querySelector('channel > description');
-  const itemTitleNodes = data.querySelectorAll('item > title');
-  const itemLinkNodes = data.querySelectorAll('item > link');
-  const itemDescriptionNodes = data.querySelectorAll('item > description');
-
-  const title = getTextContent(titleNode);
-  const description = getTextContent(descriptionNode);
-  const itemTitles = [...itemTitleNodes].map(getTextContent);
-  const itemLinks = [...itemLinkNodes].map(getTextContent);
-  const itemDescriptions = [...itemDescriptionNodes].map(getTextContent);
+  const title = getElement(data, 'channel > title');
+  const description = getElement(data, 'channel > description');
+  const itemTitles = getElements(data, 'item > title');
+  const itemLinks = getElements(data, 'item > link');
+  const itemDescriptions = getElements(data, 'item > description');
 
   const children = itemTitles.map((elem, index) =>
     ({
