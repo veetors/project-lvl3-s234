@@ -7,8 +7,12 @@ const getUrl = () => {
 };
 
 const updateUrls = (urls) => {
-  const newUrl = getUrl();
-  urls.push(newUrl);
+  try {
+    const newUrl = getUrl();
+    urls.push(newUrl);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default updateUrls;

@@ -1,27 +1,27 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import updateUrls from './urls';
-import parse from './parse';
-import { validate, getFeedsData } from './generic';
-import buildFeedsTree from './tree';
-import render from './render';
+import { appState, validate, init } from './state';
 
-const urls = [];
 
-const main = (addresses) => {
+document.addEventListener('DOMContentLoaded', () => {
+  const rssInput = document.querySelector('.rss-input');
   const rssButton = document.querySelector('.rss-button');
 
-  const handler = () => {
-    updateUrls(addresses);
+  rssInput.addEventListener('input', () => {
+    validate();
+  });
 
-    getFeedsData(urls)
-      .then(res => res.map(parse))
-      .then(data => buildFeedsTree(data))
-      .then(tree => render(tree));
-  };
+  rssInput.addEventListener('keydown', (event) => {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      if (appState.isValid) {
+        init();
+      }
+    }
+  });
 
-  validate(urls);
-
-  rssButton.addEventListener('click', handler);
-};
-
-main(urls);
+  rssButton.addEventListener('click', () => {
+    if (appState.isValid) {
+      init();
+    }
+  });
+});
