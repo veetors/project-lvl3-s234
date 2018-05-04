@@ -1,6 +1,6 @@
 {
   "name": "rss-reader-veetors",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "rss-reader",
   "main": "dist/index.js",
   "engines": {
