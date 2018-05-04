@@ -1,50 +1,35 @@
-const renderFeedList = (children, rootNode) => {
-  const ulNode = document.createElement('ul');
-  ulNode.classList.add('list-group');
-  rootNode.append(ulNode);
+const renderFeedList = (children) => {
+  const listContent = children.map((child) => {
+    const { itemTitle, itemLink } = child;
 
-  children.forEach((child) => {
-    const liNode = document.createElement('li');
-    liNode.classList.add('list-group-item');
-    const linkNode = document.createElement('a');
-    linkNode.textContent = child.itemTitle;
-    linkNode.href = child.itemLink;
-    liNode.append(linkNode);
-    ulNode.append(liNode);
-  });
+    return `<li class="list-group-item">
+      <a href="${itemLink}">${itemTitle}</a>
+    </li>`;
+  }).join('');
 
-  return rootNode;
+  return `<ul class="list-group">${listContent}</ul>`;
 };
 
 const renderFeed = (feedTree) => {
-  const rootNode = document.createElement('div');
-  rootNode.classList.add('jumbotron');
+  const { title, description, children } = feedTree;
+  const feedList = renderFeedList(children);
 
-  const feedTitleNode = document.createElement('h3');
-  feedTitleNode.textContent = feedTree.title;
-  rootNode.append(feedTitleNode);
-
-  const descriptionNode = document.createElement('p');
-  descriptionNode.textContent = feedTree.description;
-  rootNode.append(descriptionNode);
-
-  renderFeedList(feedTree.children, rootNode);
-
-  return rootNode;
+  return `<div class="jumbotron">
+    <h3>${title}</h3>
+    <p>${description}</p>
+    ${feedList}
+  </div>`;
 };
 
 const render = (tree) => {
+  const feeds = tree.map(node =>
+    renderFeed(node))
+    .join('');
+
+  const newFeeds = `<div class="feeds">${feeds}</div>`;
+  document.querySelector('.feeds-container').innerHTML = newFeeds;
+
   const rssInput = document.querySelector('.rss-input');
-  const newFeedsNode = document.createElement('div');
-  newFeedsNode.classList.add('feeds');
-
-  tree.forEach((node) => {
-    const feedNode = renderFeed(node);
-    newFeedsNode.prepend(feedNode);
-  });
-
-  document.querySelector('.feeds').replaceWith(newFeedsNode);
-
   rssInput.value = '';
 };
 
