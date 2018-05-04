@@ -12,8 +12,13 @@ const getElements = (data, selector) => {
   return [...nodes].map(getTextContent);
 };
 
-const request = url => axios.get(url);
+const showError = (error) => {
+  const rssInput = document.querySelector('.rss-input');
+  const errorEl = document.querySelector('.invalid-feedback');
+  errorEl.textContent = error;
+  rssInput.classList.add('is-invalid');
+};
 
-const getFeedsData = adreses => Promise.all(adreses.map(request));
+const getFeedData = url => axios.get(url);
 
-export { getTextContent, getElement, getElements, getFeedsData };
+export { getTextContent, getElement, getElements, showError, getFeedData };
