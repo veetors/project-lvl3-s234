@@ -1,9 +1,13 @@
 const renderFeedList = (children) => {
   const listContent = children.map((child) => {
-    const { itemTitle, itemLink } = child;
+    const { itemTitle, itemLink, itemDescription } = child;
+    const descriptionData = itemDescription;
 
-    return `<li class="list-group-item">
+    return `<li class="list-group-item d-flex justify-content-between align-items-center">
       <a href="${itemLink}">${itemTitle}</a>
+      <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#descriptionModal" data-description="${descriptionData}">
+        description
+      </button>
     </li>`;
   }).join('');
 

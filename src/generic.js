@@ -1,4 +1,5 @@
 import axios from 'axios';
+import $ from 'jquery';
 
 const getTextContent = elem => elem.textContent;
 
@@ -19,6 +20,16 @@ const showError = (error) => {
   rssInput.classList.add('is-invalid');
 };
 
+const showDescriptionModal = () => {
+  $('#descriptionModal').on('show.bs.modal', function handler(event) {
+    const button = $(event.relatedTarget);
+    const descriptionData = button.data('description');
+    const descriptionContent = descriptionData || 'No description for this link';
+    const modal = $(this);
+    modal.find('.modal-body').text(descriptionContent);
+  });
+};
+
 const getFeedData = url => axios.get(url);
 
-export { getTextContent, getElement, getElements, showError, getFeedData };
+export { getTextContent, getElement, getElements, showError, showDescriptionModal, getFeedData };

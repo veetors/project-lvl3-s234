@@ -1,6 +1,7 @@
+import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import isURL from 'validator/lib/isURL';
-import { showError, getFeedData } from './generic';
+import { showError, showDescriptionModal, getFeedData } from './generic';
 import buildFeedsTree from './tree';
 import parse from './parse';
 import render from './render';
@@ -89,4 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
       init();
     }
   });
+
+  showDescriptionModal();
 });
