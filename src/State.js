@@ -9,19 +9,11 @@ export default class {
     this.errorMassege = '';
   }
 
-  getUrls() {
-    return this.urls;
-  }
-
-  getFeedsTree() {
-    return this.feedsTree;
-  }
-
   render() {
     if (!this.isValid) {
       return this.errorMassege;
     }
-    const feeds = this.getFeedsTree().map(node =>
+    const feeds = this.feedsTree.map(node =>
       renderFeed(node))
       .join('');
 

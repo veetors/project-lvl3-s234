@@ -26,7 +26,7 @@ const updateDom = (value) => {
   }
 };
 
-const updateValidState = (massege) => {
+const updateValidateStatus = (massege) => {
   if (massege) {
     appState.isValid = false;
     appState.errorMassege = massege;
@@ -42,49 +42,65 @@ const validate = () => {
   const options = { protocols: ['http', 'https'], require_protocol: true };
 
   if (isEmpty(inputValue)) {
-    updateValidState('Please, enter URL to feed');
+    updateValidateStatus('Please, enter URL to feed');
     updateDom(appState.render());
   } else if (!isURL(inputValue, options)) {
-    updateValidState('Invalid URL');
+    updateValidateStatus('Invalid URL');
     updateDom(appState.render());
-  } else if (appState.getUrls().includes(inputValue)) {
-    updateValidState('Feed already exist');
+  } else if (appState.urls.includes(inputValue)) {
+    updateValidateStatus('Feed already exist');
     updateDom(appState.render());
   } else {
-    updateValidState();
+    updateValidateStatus();
     updateDom();
   }
 };
 
-const updateUrls = (url) => {
+const updateCurrentUrl = (value) => {
   try {
-    const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
-    const newUrl = new URL(url);
-    appState.currentUrl = `${porxyAddress}${newUrl.href}`;
-    appState.urls.push(newUrl.href);
+    const newUrl = new URL(value);
+    appState.currentUrl = newUrl.href;
   } catch (error) {
-    updateValidState('Invalid URL');
+    updateValidateStatus('Invalid URL');
     updateDom(appState.render());
   }
+};
+
+const updateUrls = (url) => {
+  if (!appState.urls.includes(url)) {
+    appState.urls.push(url);
+  }
+};
+
+const updateFeedsTree = () => {
+  const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
+
+  return new Promise((resolve, reject) => {
+    getFeedData(`${porxyAddress}${appState.currentUrl}`)
+      .then((response) => {
+        updateUrls(appState.currentUrl);
+        return parse(response);
+      })
+      .then(feedData => buildFeedTree(feedData))
+      .then(feedTree => appState.feedsTree.push(feedTree))
+      .then(() => resolve())
+      .catch((error) => {
+        reject(error);
+      });
+  });
 };
 
 const init = () => {
   const inputValue = getInputValue();
   if (inputValue === '') {
-    console.log('Please, enter URL to feed');
-    updateValidState('Please, enter URL to feed');
+    updateValidateStatus('Please, enter URL to feed');
     updateDom(appState.render());
   } else {
-    updateUrls(inputValue);
-    getFeedData(appState.currentUrl)
-      .then(response => parse(response))
-      .then(feedData => buildFeedTree(feedData))
-      .then((feedTree) => {
-        appState.feedsTree = [...appState.feedsTree, feedTree];
-        updateDom(appState.render());
-      })
+    updateCurrentUrl(inputValue);
+    updateFeedsTree()
+      .then(() => updateDom(appState.render()))
       .catch(() => {
-        updateValidState('Download error');
+        updateValidateStatus('Download error');
         updateDom(appState.render());
       });
   }
