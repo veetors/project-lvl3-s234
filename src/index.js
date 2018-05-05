@@ -2,14 +2,14 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import isURL from 'validator/lib/isURL';
 import { showError, showDescriptionModal, getFeedData } from './generic';
-import buildFeedsTree from './tree';
+import buildFeedTree from './tree';
 import parse from './parse';
 import render from './render';
 
 const appState = {
   currentUrl: '',
   urls: [],
-  feedsData: [],
+  feedsTree: [],
   isValid: true,
 };
 
@@ -21,6 +21,9 @@ const getUrl = () => {
     appState.currentUrl = newUrl.href;
   } catch (error) {
     console.log(error);
+    appState.isValid = false;
+    showError('Invalid URL');
+    console.log(appState.isValid);
   }
 };
 
@@ -52,13 +55,12 @@ const init = () => {
     showError('Please, enter URL to feed');
   } else {
     getFeedData(appState.currentUrl)
-      .then((response) => {
-        const data = parse(response);
-        appState.feedsData.push(data);
-
-        return appState.feedsData;
+      .then(response => parse(response))
+      .then(feedData => buildFeedTree(feedData))
+      .then((feedTree) => {
+        appState.feedsTree = [...appState.feedsTree, feedTree];
+        return appState.feedsTree;
       })
-      .then(feedsData => buildFeedsTree(feedsData))
       .then(tree => render(tree))
       .catch((error) => {
         console.log(error);
