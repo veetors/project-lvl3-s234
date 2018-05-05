@@ -1,7 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isURL, isEmpty } from 'validator';
-import axios from 'axios';
 import State from './State';
 import { getInputValue, showDescriptionModal, getFeedData } from './generic';
 import buildFeedTree from './tree';
