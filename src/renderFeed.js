@@ -25,16 +25,4 @@ const renderFeed = (feedTree) => {
   </div>`;
 };
 
-const render = (tree) => {
-  const feeds = tree.map(node =>
-    renderFeed(node))
-    .join('');
-
-  const newFeeds = `<div class="feeds">${feeds}</div>`;
-  document.querySelector('.feeds-container').innerHTML = newFeeds;
-
-  const rssInput = document.querySelector('.rss-input');
-  rssInput.value = '';
-};
-
-export default render;
+export default renderFeed;

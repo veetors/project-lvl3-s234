@@ -1,55 +1,81 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isURL, isEmpty } from 'validator';
-import { getInputValue, showError, showDescriptionModal, getFeedData } from './generic';
+import State from './State';
+import { getInputValue, showDescriptionModal, getFeedData } from './generic';
 import buildFeedTree from './tree';
 import parse from './parse';
-import render from './render';
 
-const appState = {
-  currentUrl: '',
-  urls: [],
-  feedsTree: [],
-  isValid: true,
+const appState = new State();
+
+const updateDom = (value) => {
+  const rssInput = document.querySelector('.rss-input');
+  const rssButton = document.querySelector('.rss-button');
+  if (appState.isValid) {
+    rssInput.classList.remove('is-invalid');
+    rssButton.disabled = false;
+    if (value) {
+      rssInput.value = '';
+      document.querySelector('.feeds-container').innerHTML = value;
+    }
+  } else {
+    const errorNode = document.querySelector('.invalid-feedback');
+    errorNode.textContent = value;
+    rssInput.classList.add('is-invalid');
+    rssButton.disabled = true;
+  }
+};
+
+const updateValidState = (massege) => {
+  if (massege) {
+    appState.isValid = false;
+    appState.errorMassege = massege;
+  } else {
+    appState.isValid = true;
+    appState.errorMassege = '';
+  }
 };
 
 const validate = () => {
   const rssInput = document.querySelector('.rss-input');
-  const rssButton = document.querySelector('.rss-button');
   const inputValue = rssInput.value;
   const options = { protocols: ['http', 'https'], require_protocol: true };
 
+
+
   if (isEmpty(inputValue)) {
-    appState.isValid = false;
-    showError('Please, enter URL to feed');
+    updateValidState('Please, enter URL to feed');
+    updateDom(appState.render());
   } else if (!isURL(inputValue, options)) {
-    appState.isValid = false;
-    showError('Invalid URL');
-  } else if (appState.urls.includes(inputValue)) {
-    appState.isValid = false;
-    showError('Feed already exist');
+    updateValidState('Invalid URL');
+    updateDom(appState.render());
+  } else if (appState.getUrls().includes(inputValue)) {
+    updateValidState('Feed already exist');
+    updateDom(appState.render());
   } else {
-    appState.isValid = true;
-    rssInput.classList.remove('is-invalid');
-    rssButton.disabled = false;
+    updateValidState();
+    updateDom();
   }
 };
 
 const updateUrls = (url) => {
   try {
+    const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
     const newUrl = new URL(url);
-    appState.currentUrl = newUrl.href;
-    appState.urls.push(appState.currentUrl);
+    appState.currentUrl = `${porxyAddress}${newUrl.href}`;
+    appState.urls.push(newUrl.href);
   } catch (error) {
-    showError('Invalid URL');
-    appState.isValid = false;
+    updateValidState('Invalid URL');
+    updateDom(appState.render());
   }
 };
 
 const init = () => {
   const inputValue = getInputValue();
   if (inputValue === '') {
-    showError('Please, enter URL to feed');
+    console.log('Please, enter URL to feed');
+    updateValidState('Please, enter URL to feed');
+    updateDom(appState.render());
   } else {
     updateUrls(inputValue);
     getFeedData(appState.currentUrl)
@@ -57,11 +83,11 @@ const init = () => {
       .then(feedData => buildFeedTree(feedData))
       .then((feedTree) => {
         appState.feedsTree = [...appState.feedsTree, feedTree];
-        return appState.feedsTree;
+        updateDom(appState.render());
       })
-      .then(tree => render(tree))
       .catch(() => {
-        showError('Download error');
+        updateValidState('Download error');
+        updateDom(appState.render());
       });
   }
 };
