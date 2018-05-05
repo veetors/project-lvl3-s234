@@ -1,6 +1,7 @@
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { isURL, isEmpty } from 'validator';
+import axios from 'axios';
 import State from './State';
 import { getInputValue, showDescriptionModal, getFeedData } from './generic';
 import buildFeedTree from './tree';
@@ -15,7 +16,6 @@ const updateDom = (value) => {
     rssInput.classList.remove('is-invalid');
     rssButton.disabled = false;
     if (value) {
-      rssInput.value = '';
       document.querySelector('.feeds-container').innerHTML = value;
     }
   } else {
@@ -72,13 +72,13 @@ const updateUrls = (url) => {
   }
 };
 
-const updateFeedsTree = () => {
+const updateFeedsTree = (url) => {
   const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
 
   return new Promise((resolve, reject) => {
-    getFeedData(`${porxyAddress}${appState.currentUrl}`)
+    getFeedData(`${porxyAddress}${url}`)
       .then((response) => {
-        updateUrls(appState.currentUrl);
+        updateUrls(url);
         return parse(response);
       })
       .then(feedData => buildFeedTree(feedData))
@@ -90,6 +90,11 @@ const updateFeedsTree = () => {
   });
 };
 
+const updateFeeds = (urls) => {
+  appState.feedsTree = [];
+  return Promise.all(urls.map(updateFeedsTree));
+};
+
 const init = () => {
   const inputValue = getInputValue();
   if (inputValue === '') {
@@ -97,13 +102,29 @@ const init = () => {
     updateDom(appState.render());
   } else {
     updateCurrentUrl(inputValue);
-    updateFeedsTree()
-      .then(() => updateDom(appState.render()))
+    updateFeedsTree(appState.currentUrl)
+      .then(() => {
+        updateDom(appState.render());
+      })
       .catch(() => {
         updateValidateStatus('Download error');
         updateDom(appState.render());
       });
   }
+};
+
+const intervalUpdateFeeds = (urls) => {
+  setTimeout(() => {
+    updateFeeds(urls)
+      .then(() => {
+        updateDom(appState.render());
+      })
+      .then(() => intervalUpdateFeeds(urls))
+      .catch(() => {
+        updateValidateStatus('Download error');
+        updateDom(appState.render());
+      });
+  }, 5000);
 };
 
 
@@ -120,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       if (appState.isValid) {
         init();
+        rssInput.value = '';
       }
     }
   });
@@ -127,8 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
   rssButton.addEventListener('click', () => {
     if (appState.isValid) {
       init();
+      rssInput.value = '';
     }
   });
+
+  intervalUpdateFeeds(appState.urls);
 
   showDescriptionModal();
 });

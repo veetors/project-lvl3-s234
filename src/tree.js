@@ -4,12 +4,14 @@ const buildItemTree = (data) => {
   const itemTitles = getElements(data, 'item > title');
   const itemLinks = getElements(data, 'item > link');
   const itemDescriptions = getElements(data, 'item > description');
+  const itemGuids = getElements(data, 'item > guid');
 
   return itemTitles.map((title, index) =>
     ({
       itemTitle: title,
       itemLink: itemLinks[index],
       itemDescription: itemDescriptions[index],
+      itemGuid: itemGuids[index],
     }));
 };
 
