@@ -41,8 +41,6 @@ const validate = () => {
   const inputValue = rssInput.value;
   const options = { protocols: ['http', 'https'], require_protocol: true };
 
-
-
   if (isEmpty(inputValue)) {
     updateValidState('Please, enter URL to feed');
     updateDom(appState.render());

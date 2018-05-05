@@ -1,5 +1,4 @@
 import renderFeed from './renderFeed';
-import { showError } from './generic';
 
 export default class {
   constructor() {
