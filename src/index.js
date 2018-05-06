@@ -74,19 +74,13 @@ const updateUrls = (url) => {
 const updateFeedsTree = (url) => {
   const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
 
-  return new Promise((resolve, reject) => {
-    getFeedData(`${porxyAddress}${url}`)
-      .then((response) => {
-        updateUrls(url);
-        return parse(response);
-      })
-      .then(feedData => buildFeedTree(feedData))
-      .then(feedTree => appState.feedsTree.push(feedTree))
-      .then(() => resolve())
-      .catch((error) => {
-        reject(error);
-      });
-  });
+  return getFeedData(`${porxyAddress}${url}`)
+    .then((response) => {
+      updateUrls(url);
+      return parse(response);
+    })
+    .then(feedData => buildFeedTree(feedData))
+    .then(feedTree => appState.feedsTree.push(feedTree));
 };
 
 const updateFeeds = (urls) => {
@@ -122,6 +116,11 @@ const intervalUpdateFeeds = (urls) => {
       .catch(() => {
         updateValidateStatus('Download error');
         updateDom(appState.render());
+        setTimeout(() => {
+          updateValidateStatus();
+          updateDom(appState.render());
+          intervalUpdateFeeds(urls);
+        }, 10000);
       });
   }, 5000);
 };
