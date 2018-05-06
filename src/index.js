@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { isURL, isEmpty } from 'validator';
 import State from './State';
 import { getInputValue, showDescriptionModal, getFeedData } from './generic';
-import buildFeedTree from './tree';
+import { buildTitleTree, buildItemTree } from './tree';
 import parse from './parse';
 
 const appState = new State();
@@ -71,7 +71,7 @@ const updateUrls = (url) => {
   }
 };
 
-const updateFeedsTree = (url) => {
+const updateFeedsTrees = (url) => {
   const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
 
   return new Promise((resolve, reject) => {
@@ -80,8 +80,28 @@ const updateFeedsTree = (url) => {
         updateUrls(url);
         return parse(response);
       })
-      .then(feedData => buildFeedTree(feedData))
-      .then(feedTree => appState.feedsTree.push(feedTree))
+      .then(feedData => [buildTitleTree(feedData), buildItemTree(feedData)])
+      .then((feedTrees) => {
+        const [titleTree, itemTree] = feedTrees;
+        console.log(itemTree);
+        appState.feedsTitlesTree.push(titleTree);
+        appState.feedsItemsTree.push(...itemTree);
+      })
+      .then(() => resolve())
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+const updateItemsTree = (url) => {
+  const porxyAddress = 'http://cors-anywhere.herokuapp.com/';
+
+  return new Promise((resolve, reject) => {
+    getFeedData(`${porxyAddress}${url}`)
+      .then(response => parse(response))
+      .then(feedData => buildItemTree(feedData))
+      .then(itemTree => appState.feedsItemsTree.push(...itemTree))
       .then(() => resolve())
       .catch((error) => {
         reject(error);
@@ -90,26 +110,8 @@ const updateFeedsTree = (url) => {
 };
 
 const updateFeeds = (urls) => {
-  appState.feedsTree = [];
-  return Promise.all(urls.map(updateFeedsTree));
-};
-
-const init = () => {
-  const inputValue = getInputValue();
-  if (inputValue === '') {
-    updateValidateStatus('Please, enter URL to feed');
-    updateDom(appState.render());
-  } else {
-    updateCurrentUrl(inputValue);
-    updateFeedsTree(appState.currentUrl)
-      .then(() => {
-        updateDom(appState.render());
-      })
-      .catch(() => {
-        updateValidateStatus('Download error');
-        updateDom(appState.render());
-      });
-  }
+  appState.feedsItemsTree = [];
+  return Promise.all(urls.map(updateItemsTree));
 };
 
 const intervalUpdateFeeds = (urls) => {
@@ -126,6 +128,24 @@ const intervalUpdateFeeds = (urls) => {
   }, 5000);
 };
 
+const init = () => {
+  const inputValue = getInputValue();
+  if (inputValue === '') {
+    updateValidateStatus('Please, enter URL to feed');
+    updateDom(appState.render());
+  } else {
+    updateCurrentUrl(inputValue);
+    updateFeedsTrees(appState.currentUrl)
+      .then(() => {
+        updateDom(appState.render());
+        // intervalUpdateFeeds(appState.urls);
+      })
+      .catch(() => {
+        updateValidateStatus('Download error');
+        updateDom(appState.render());
+      });
+  }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const rssInput = document.querySelector('.rss-input');
@@ -151,8 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
       rssInput.value = '';
     }
   });
-
-  intervalUpdateFeeds(appState.urls);
 
   showDescriptionModal();
 });

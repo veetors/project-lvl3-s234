@@ -1,28 +1,39 @@
-const renderFeedList = (children) => {
-  const listContent = children.map((child) => {
-    const { itemTitle, itemLink, itemDescription } = child;
-    const descriptionData = itemDescription;
+const renderFeedTitle = (titleData) => {
+  const { title, description } = titleData;
+  return `<div>
+    <h3>${title}</h3>
+    <p>${description}</p>
+  </div>`;
+};
 
-    return `<li class="list-group-item d-flex justify-content-between align-items-center">
-      <a href="${itemLink}">${itemTitle}</a>
-      <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#descriptionModal" data-description="${descriptionData}">
+const renderFeedsTitles = (titlesTree) => {
+  const listContent = titlesTree.map(renderFeedTitle).join('');
+  return `<div>${listContent}</div>`;
+};
+
+const renderFeedItem = (itemData) => {
+  const {
+    feedLink,
+    itemTitle,
+    itemLink,
+    itemDescription,
+  } = itemData;
+
+  return `<li class="list-group-item d-flex justify-content-between align-items-center">
+      <div style="display: flex; flex-direction: column;">
+        <a href="${feedLink}" style="font-size: 12px;">${feedLink}</a>
+        <a href="${itemLink}">${itemTitle}</a>
+      </div>
+      <button type="button" class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#descriptionModal" data-description="${itemDescription}">
         description
       </button>
     </li>`;
-  }).join('');
+};
+
+const renderFeedsItems = (itemsTree) => {
+  const listContent = itemsTree.map(node => renderFeedItem(node)).join('');
 
   return `<ul class="list-group">${listContent}</ul>`;
 };
 
-const renderFeed = (feedTree) => {
-  const { title, description, children } = feedTree;
-  const feedList = renderFeedList(children);
-
-  return `<div class="jumbotron">
-    <h3>${title}</h3>
-    <p>${description}</p>
-    ${feedList}
-  </div>`;
-};
-
-export default renderFeed;
+export { renderFeedsTitles, renderFeedsItems };
